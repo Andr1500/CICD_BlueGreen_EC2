@@ -22,8 +22,10 @@ build_image:
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
   before_script:
-    - pip install awscliv2
-    - awsv2 ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - ./aws/install
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
   #   - docker push $IMAGE_NAME:$IMAGE_TAG
