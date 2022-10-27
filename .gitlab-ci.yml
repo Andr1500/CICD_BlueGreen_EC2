@@ -1,3 +1,8 @@
+#variables
+variables:
+  IMAGE_NAME: a1500/demo-app
+  IMAGE_TAG: python-app-1.0
+
 #run test
 run_tests:
   image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
@@ -20,5 +25,5 @@ build_image:
     - pip install awscliv2
     - awsv2 ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
   script:
-  #   - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
   #   - docker push $IMAGE_NAME:$IMAGE_TAG
