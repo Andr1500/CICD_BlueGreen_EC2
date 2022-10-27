@@ -40,7 +40,7 @@ publish:
     name: amazon/aws-cli
     entrypoint: [""]
   services:
-    - docker:docker:20.10.16-dind
+    - docker:docker:dind
   before_script:
     - amazon-linux-extras install docker
     - aws --version
