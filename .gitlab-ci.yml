@@ -51,7 +51,7 @@ publish:
     - mkdir ~/.aws/
     - touch ~/.aws/credentials
     - export NO_PROXY=169.254.169.254
-    - printf "[eb-cli]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
+    - printf "[default]\naws_access_key_id = %s\naws_secret_access_key = %s\nregion = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" "$AWS_DEFAULT_REGION" >> ~/.aws/credentials
     - cat ~/.aws/credentials
     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 138161713046.dkr.ecr.eu-central-1.amazonaws.com
     - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
