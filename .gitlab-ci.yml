@@ -2,7 +2,9 @@
 run_tests:
   image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
   before_script: #set up necessary dependencies
-    - apt-get update && apt-get install make && apt-get install -y amazon-ecr-credential-helper
+    - apt-get update && apt-get install make
+    - apt-get install -y amazon-ecr-credential-helper
+    - apt-get install awscli
   script:
     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
     - make test
