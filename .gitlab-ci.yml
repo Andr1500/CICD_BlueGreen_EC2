@@ -1,10 +1,12 @@
 #variables
 variables:
   DOCKER_REGISTRY: 138161713046.dkr.ecr.eu-central-1.amazonaws.com
+  AWS_DEFAULT_REGION: eu-central-1
   IMAGE_NAME: python-app
   APP_NAME: python-app
   IMAGE_TAG: python-app-1.0
   DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
 
 #run test
 run_tests:
