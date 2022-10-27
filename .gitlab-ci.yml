@@ -5,7 +5,7 @@ variables:
   IMAGE_NAME: python-app
   APP_NAME: python-app
   IMAGE_TAG: python-app-1.0
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://localhost:2375/
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
 
@@ -40,7 +40,7 @@ publish:
     name: amazon/aws-cli
     entrypoint: [""]
   services:
-    - docker:docker:dind
+    - docker:dind
   before_script:
     - amazon-linux-extras install docker
     - aws --version
