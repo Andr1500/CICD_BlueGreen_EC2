@@ -1,6 +1,6 @@
 run_tests:
   image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
   before_script: #set up necessary dependencies
-    - apt update && apt install make
+    - apt-get update && apt-get install make
   script:
     - make test
