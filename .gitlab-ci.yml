@@ -9,12 +9,12 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 
 #run test
-run_tests:
-  image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
-  before_script: #set up necessary dependencies
-    - apt-get update && apt-get install make
-  script:
-    - make test
+# run_tests:
+#   image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
+#   before_script: #set up necessary dependencies
+#     - apt-get update && apt-get install make
+#   script:
+#     - make test
 
 #build docker image and push it to private repo
 # build_image:
@@ -44,7 +44,10 @@ publish:
     - amazon-linux-extras install docker
     - aws --version
     - docker --version
-  script: 
+  script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_DEFAULT_REGION
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
