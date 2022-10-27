@@ -5,7 +5,7 @@ variables:
   IMAGE_NAME: python-app
   APP_NAME: python-app
   IMAGE_TAG: python-app-1.0
-  # DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
 
 #run test
@@ -44,7 +44,7 @@ publish:
     - amazon-linux-extras install docker
     - aws --version
     - docker --version
-  script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID . 
+  script: 
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
