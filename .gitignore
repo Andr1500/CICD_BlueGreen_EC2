@@ -105,3 +105,20 @@ test-*.xml
 tests/node_modules
 tests/package*.json
 .pytest_cache
+
+#local terraform dirs
+**/.terraform/*
+
+#state files
+*.tfstate
+*.tfstate.*
+
+#crash log files
+*.log
+*.logs
+
+#lock files
+*.lock.hcl
+
+#sensitive data
+*.tfvars
