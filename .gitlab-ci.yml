@@ -1,15 +1,22 @@
 #variables
 variables:
-  DOCKER_REGISTRY: 138161713046.dkr.ecr.eu-central-1.amazonaws.com
-  AWS_DEFAULT_REGION: eu-central-1
-  IMAGE_NAME: python-app
-  APP_NAME: python-app
+  DOCKER_REGISTRY: $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
+  IMAGE_NAME: python-app2
   IMAGE_TAG: python-app-1.0
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
+  BUILD_HOST_USER: ubuntu
+  BUILD_HOST_IP: 18.184.218.219
+
+#steps, run one by one
+stages:
+  - test
+  - build
+  - deploy
 
 #run test
 run_tests:
+  stage: test
   image: python:3.9-slim-buster #we need this image because default docker image is Ruby based on
   before_script: #set up necessary dependencies
     - apt-get update && apt-get install make
@@ -17,17 +24,42 @@ run_tests:
     - make test
 
 #build docker image and push it to private repo
-build_image:
+build_push_image:
+  stage: build
   image: 
     name: amazon/aws-cli
     entrypoint: [""]
-  services:
+  services: #interract between main container and dind container
     - docker:dind
   before_script:
     - amazon-linux-extras install docker
     - aws --version
     - docker --version
   script:
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID
+
+#deploy app
+deploy:
+  stage: deploy
+  image: 
+    name: amazon/aws-cli
+    entrypoint: [""]
+  services: #interract between main container and dind container
+    - docker:dind
+  before_script:
+    - amazon-linux-extras install docker
+    - yum  install openssh-clients -y
+    - yum  install openssh-server -y
+    # - service sshd start
+    - aws --version
+    - docker --version
+    - chmod 400 $SSH_KEY
+  script:
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $BUILD_HOST_USER@$BUILD_HOST_IP "
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID &&
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY &&
+        aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY &&
+        docker ps -aq | xargs docker stop | xargs docker rm &&
+        docker run -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
