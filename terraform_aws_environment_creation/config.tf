@@ -12,7 +12,7 @@
 
 
 provider "aws" {
-  region = "eu-central-1"
+  region = var.region
 }
 
 data "aws_ami" "rhel8" {
@@ -46,7 +46,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_ecr_repository" "repo" {
-  name                 = "python-app2"
+  name                 = "python-app"
   image_tag_mutability = "MUTABLE"
   force_delete         = true
 
@@ -56,55 +56,65 @@ resource "aws_ecr_repository" "repo" {
 }
 
 resource "aws_instance" "ansible_RHEL8" {
-  count                  = 0
+  count                  = var.count_rhel_instances
   ami                    = data.aws_ami.rhel8.id
-  instance_type          = "t3.micro"
+  instance_type          = var.instance_type
   key_name               = "aws_key"
-  vpc_security_group_ids = [aws_security_group.ansible_sg.id]
+  vpc_security_group_ids = [aws_security_group.sg.id]
 
   tags = {
     Name  = "Server_RHEL8_${count.index + 1}"
     Owner = "Gitlab_CI"
   }
+  provisioner "file" {
+    source      = "docker_aws_install_rhel.sh"
+    destination = "/tmp/docker_aws_install_rhel.sh"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/docker_aws_install_rhel.sh",
+      "sudo /tmp/docker_aws_install_rhel.sh"
+    ]
+  }
   connection {
     type        = "ssh"
     host        = self.public_ip
     user        = "ec2-user"
-    private_key = file("/home/a1500/.ssh/id_rsa")
+    private_key = file("~/.ssh/id_rsa")
   }
 }
 
 resource "aws_instance" "ansible_ubuntu_linux" {
-  count                  = 1
+  count                  = var.count_ubuntu_instances
   ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t3.micro"
+  instance_type          = var.instance_type
   key_name               = "aws_key"
-  vpc_security_group_ids = [aws_security_group.ansible_sg.id]
+  vpc_security_group_ids = [aws_security_group.sg.id]
 
   tags = {
     Name  = "Server_Ubuntu_Linux_${count.index + 1}"
     Owner = "Gtlab_CI"
   }
   provisioner "file" {
-    source      = "docker_aws_install.sh"
-    destination = "/tmp/docker_aws_install.sh"
+    source      = "docker_aws_install_ubuntu.sh"
+    destination = "/tmp/docker_aws_install_ubuntu.sh"
   }
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/docker_aws_install.sh",
-      "sudo /tmp/docker_aws_install.sh"
+      "chmod +x /tmp/docker_aws_install_ubuntu.sh",
+      "sudo /tmp/docker_aws_install_ubuntu.sh"
     ]
   }
   connection {
     type        = "ssh"
     host        = self.public_ip
     user        = "ubuntu"
-    private_key = file("/home/a1500/.ssh/id_rsa")
+    private_key = file("~/.ssh/id_rsa")
   }
 }
 
-resource "aws_security_group" "ansible_sg" {
-  name = "ansible-SG"
+resource "aws_security_group" "sg" {
+  name = "SG"
 
   dynamic "ingress" {
     for_each = ["80", "8080", "443", "22", "5000"]
