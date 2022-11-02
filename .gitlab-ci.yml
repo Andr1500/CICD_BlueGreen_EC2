@@ -1,12 +1,15 @@
 #variables
 variables:
-  DOCKER_REGISTRY: $AWS_ACCOUNT.dkr.ecr.eu-central-1.amazonaws.com
-  IMAGE_NAME: python-app2
-  IMAGE_TAG: python-app-1.0
+  DOCKER_REGISTRY: $AWS_ACCOUNT.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  IMAGE_NAME: python-app
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
-  BUILD_HOST_USER: ubuntu
-  BUILD_HOST_IP: 18.184.218.219
+
+#steps, run one by one
+stages:
+  - test
+  - build
+  - deploy
 
 #steps, run one by one
 stages:
@@ -26,7 +29,7 @@ run_tests:
 #build docker image and push it to private repo
 build_push_image:
   stage: build
-  image: 
+  image:
     name: amazon/aws-cli
     entrypoint: [""]
   services: #interract between main container and dind container
@@ -43,7 +46,7 @@ build_push_image:
 #deploy app
 deploy:
   stage: deploy
-  image: 
+  image:
     name: amazon/aws-cli
     entrypoint: [""]
   services: #interract between main container and dind container
@@ -56,10 +59,11 @@ deploy:
     - aws --version
     - docker --version
     - chmod 400 $SSH_KEY
-  script:
+  script: #ssh on remote host and execute commands on the host
     - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $BUILD_HOST_USER@$BUILD_HOST_IP "
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID &&
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY &&
+        export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" &&
+        export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" &&
         aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY &&
-        docker ps -aq | xargs docker stop | xargs docker rm &&
-        docker run -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
+        docker ps -a -q --filter name="$IMAGE_NAME" | xargs -r docker stop | xargs -r docker rm &&
+        docker image prune -a -f &&
+        docker run --name $IMAGE_NAME -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
