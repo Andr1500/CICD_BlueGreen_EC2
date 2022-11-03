@@ -16,6 +16,7 @@ stages:
   - test
   - build
   - deploy
+  - blue_green
 
 #run test
 run_tests:
@@ -67,8 +68,8 @@ deploy:
         lsof -i -P -n | grep LISTEN | grep 80 &> /dev/null && echo "port 80 is busy" || echo "port 80 is not busy" &&
         lsof -i -P -n | grep LISTEN | grep 80 &> /dev/null && docker run --name python-app2 -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID || docker run --name python-app1 -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
 
-blue-green:
-  stage: blue-green
+blue_green:
+  stage: blue_green
   when: manual
   image:
     name: amazon/aws-cli
