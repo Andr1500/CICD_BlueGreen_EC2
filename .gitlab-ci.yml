@@ -10,12 +10,6 @@ stages:
   - test
   - build
   - deploy
-
-#steps, run one by one
-stages:
-  - test
-  - build
-  - deploy
   - blue_green
 
 #run test
