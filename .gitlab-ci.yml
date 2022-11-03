@@ -64,6 +64,28 @@ deploy:
         export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" &&
         export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" &&
         aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY &&
-        docker ps -a -q --filter name="$IMAGE_NAME" | xargs -r docker stop | xargs -r docker rm &&
-        docker image prune -a -f &&
-        docker run --name $IMAGE_NAME -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
+        lsof -i -P -n | grep LISTEN | grep 80 &> /dev/null && echo "port 80 is busy" || echo "port 80 is not busy" &&
+        lsof -i -P -n | grep LISTEN | grep 80 &> /dev/null && docker run --name python-app2 -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID || docker run --name python-app1 -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
+
+blue-green:
+  stage: blue-green
+  when: manual
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
+  services: #interract between main container and dind container
+    - docker:dind
+  before_script:
+    - yum  install openssh-clients -y
+    - yum  install openssh-server -y
+    # - service sshd start
+    - aws --version
+    - chmod 400 $SSH_KEY
+  script: #ssh on remote host and execute commands on the host
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $BUILD_HOST_USER@$BUILD_HOST_IP "
+        lsof -i -P -n | grep LISTEN | grep 80 &> /dev/null && echo "port 80 is busy" || echo "port 80 is not busy" &&
+        docker ps -a -q --filter name="python-app1" | xargs -r docker stop | xargs -r docker rm &&
+        docker ps &&
+        docker run --name "python-app1" -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID &&
+        docker ps -a -q --filter name="python-app2" | xargs -r docker stop | xargs -r docker rm &&
+        docker image prune -a -f"
