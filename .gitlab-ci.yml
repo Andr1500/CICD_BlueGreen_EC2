@@ -38,7 +38,7 @@ build_push_image:
     - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID
 
-#deploy app
+#deploy app on EC2 instance
 deploy:
   stage: deploy
   image:
@@ -79,7 +79,6 @@ blue_green:
     - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $BUILD_HOST_USER@$BUILD_HOST_IP "
         sudo lsof -i -P -n | grep LISTEN | grep 80  && echo "port 80 is busy" || echo "port 80 is not busy" &&
         docker ps -a -q --filter name="python-app1" | xargs -r docker stop | xargs -r docker rm &&
-        docker ps &&
         docker run --name "python-app1" -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID &&
         docker ps -a -q --filter name="python-app2" | xargs -r docker stop | xargs -r docker rm &&
         docker image prune -a -f"
