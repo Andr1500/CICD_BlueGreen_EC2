@@ -10,12 +10,7 @@ stages:
   - test
   - build
   - deploy
-
-#steps, run one by one
-stages:
-  - test
-  - build
-  - deploy
+  - blue_green
 
 #run test
 run_tests:
@@ -43,7 +38,7 @@ build_push_image:
     - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID .
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID
 
-#deploy app
+#deploy app on EC2 instance
 deploy:
   stage: deploy
   image:
@@ -64,6 +59,27 @@ deploy:
         export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" &&
         export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" &&
         aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY &&
-        docker ps -a -q --filter name="$IMAGE_NAME" | xargs -r docker stop | xargs -r docker rm &&
-        docker image prune -a -f &&
-        docker run --name $IMAGE_NAME -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
+        docker ps -a -q --filter name="python-app2" | xargs -r docker stop | xargs -r docker rm &&
+        docker ps -a -q --filter name="python-app1" && docker run --name python-app2 -d -p 5000:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID || docker run --name python-app1 -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID"
+
+blue_green:
+  stage: blue_green
+  when: manual
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
+  services: #interract between main container and dind container
+    - docker:dind
+  before_script:
+    - yum  install openssh-clients -y
+    - yum  install openssh-server -y
+    # - service sshd start
+    - aws --version
+    - chmod 400 $SSH_KEY
+  script: #ssh on remote host and execute commands on the host
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $BUILD_HOST_USER@$BUILD_HOST_IP "
+        sudo lsof -i -P -n | grep LISTEN | grep 80  && echo "port 80 is busy" || echo "port 80 is not busy" &&
+        docker ps -a -q --filter name="python-app1" | xargs -r docker stop | xargs -r docker rm &&
+        docker run --name "python-app1" -d -p 80:5000 $DOCKER_REGISTRY/$IMAGE_NAME:$CI_PIPELINE_IID &&
+        docker ps -a -q --filter name="python-app2" | xargs -r docker stop | xargs -r docker rm &&
+        docker image prune -a -f"

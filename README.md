@@ -1,6 +1,6 @@
 # Python Flask - Demo Web Application
 
-This is a simple Python Flask web application. The app is based on this: https://github.com/benc-uk/python-demoapp. The app provides system information and a realtime monitoring screen with dials showing CPU, memory, IO and process information.
+This is a simple Python Flask web application. The app is based on this repo: https://github.com/benc-uk/python-demoapp. The app provides system information and a realtime monitoring screen with dials showing CPU, memory, IO and process information.
 
 The app has been designed with cloud native demos & containers in mind, in order to provide a real working application for deployment, something more than "hello-world" but with the minimum of pre-reqs. It is not intended as a complete example of a fully functioning architecture or complex software design.
 
@@ -49,7 +49,7 @@ The app runs under Flask and listens on port 5000 by default, this can be change
 
 # Creation of Elastic Container Registry and EC2 instance with Terraform
 
-Got to /terraform_aws_environment_creation and build AWS environment:
+Go to /terraform_aws_environment_creation and build AWS environment:
 
 set AWS credentials, credentials can be exported as environment variables:
 ```
@@ -58,11 +58,20 @@ export AWS_ACCESS_KEY_ID="ACCES_KEY"
 ```
 run ```terraform init```
 if everything is ok, run ```terraform plan``` and ```terraform apply```
-
+when infrastructure wil not be necessary, run ```terraform destroy```
 
 # Gitlab CI/CD pipeline
 
-A working set of CI and CD release Gitlab workflows are provided in .gitlab-ci.yml, automated builds are run in Gitlab hosted runners
+A working set of CI and CD release Gitlab workflows are provided in .gitlab-ci.yml, automated builds running on Gitlab hosted runners
+
+Gitlab pipeline stages:
+
+- **test** Making test of the app
+- **build** Build docker image and push it to private repo.
+- **deploy** Deploy app on EC2 instance, first build deploy docker on 80 port as "blue deployment", next build deploy container on 5000 port as "green deployment". "python-app1" is container name for "blue deployment", "python-app2" is container name for "green deployment".
+- **blue_green** Manual stage, after verifying that everything is ok with "green deployment" we run this stage and "green deployment" becomes "blue deployment". We stop and delete the container "python-app1" and recreate it based on "green deployment" image. Next we stop and delete "green deployment" container. Next we delete all unused images.
+
+![Gitlab CI/CD pipeline](images/gitlab_pipeline.png)
 
 # Gitlab CI/CD Variables
 
