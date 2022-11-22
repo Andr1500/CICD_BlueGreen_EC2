@@ -16,6 +16,8 @@ push_to_codecommit:
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
     - cat ~/.ssh/config
+    - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
+    - cat ~/.ssh/known_hosts
   script:
     - git config --global user.email "gitlab_push@push"
     - git config --global user.name "APKASAKYUN6LICIFOTJK"
