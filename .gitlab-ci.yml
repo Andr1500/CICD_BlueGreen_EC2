@@ -21,10 +21,10 @@ push_to_codecommit:
     - cat ~/.ssh/known_hosts
   script:
     - git init
+    - git config --global user.email "a1500@tutanota.com"
+    - git config --global user.name "APKASAKYUN6LICIFOTJK"
     - git add .
     - git commit -m "initial commit"
-    - git config --global user.email "gitlab_push@push"
-    - git config --global user.name "APKASAKYUN6LICIFOTJK"
     - git remote add origin ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
     - git branch main
     - git checkout main
