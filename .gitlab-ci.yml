@@ -25,6 +25,8 @@ push_to_codecommit:
     - git remote -v
     - ls -l
     - pwd
+    - touch test
+    - git add .
     - git commit -m "initial commit"
     # - git add -f . # Force add PDF since we .gitignored it
     # - git commit -m "Compiled from $CI_COMMIT_SHORT_SHA"
