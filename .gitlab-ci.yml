@@ -24,6 +24,7 @@ push_to_codecommit:
     - git remote rm origin && git remote add origin ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
     - git remote -v
     - ls -l
+    - pwd
     - git commit -m "initial commit"
     # - git add -f . # Force add PDF since we .gitignored it
     # - git commit -m "Compiled from $CI_COMMIT_SHORT_SHA"
