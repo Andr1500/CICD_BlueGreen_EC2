@@ -20,7 +20,7 @@ deploy:
     - git config --global user.name "APKASAKYUN6LICIFOTJK"
     - git add -f . # Force add PDF since we .gitignored it
     - git commit -m "Compiledfrom $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
-    - git remote rm origin && git remote add origin git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
+    - git remote rm origin && git remote add origin git@git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab.git
     - git push origin HEAD:$CI_COMMIT_REF_NAME # Pushes to the same branch as the trigger
 
 # #steps, run one by one
