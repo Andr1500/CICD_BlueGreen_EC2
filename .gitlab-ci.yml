@@ -10,6 +10,7 @@ push_to_codecommit:
   before_script:
     - 'which ssh-agent || ( apt-get update -qy && apt-get install openssh-client -qqy )'
     - eval `ssh-agent -s`
+    - rm -rf /builds/Andr1500/CICD_flask_app_with_BlueGreen/.git
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
@@ -19,6 +20,7 @@ push_to_codecommit:
     - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
     - cat ~/.ssh/known_hosts
   script:
+    - git init
     - git config --global user.email "gitlab_push@push"
     - git config --global user.name "APKASAKYUN6LICIFOTJK"
     - git remote rm origin && git remote add origin ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
