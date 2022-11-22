@@ -31,6 +31,7 @@ push_to_codecommit:
     - touch test.txt
     - git add .
     - git commit -m "initial commit"
+    - chmod -Rf u+w /builds/Andr1500/CICD_flask_app_with_BlueGreen
     # - git add -f . # Force add PDF since we .gitignored it
     # - git commit -m "Compiled from $CI_COMMIT_SHORT_SHA"
     # - git commit -m "Compiledfrom $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
