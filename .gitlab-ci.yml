@@ -7,9 +7,9 @@ variables:
 
 commit_to_codecommit:
     stage: deploy
-    resource_group: this_option_comes_handy_when_pushing
-    only:
-        - triggers
+    # resource_group: this_option_comes_handy_when_pushing
+    # only:
+    #     - triggers
     before_script:
         - mkdir ~/.ssh/
         - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
