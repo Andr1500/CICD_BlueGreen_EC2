@@ -19,8 +19,8 @@ commit_to_codecommit:
         - git config user.name "APKASAKYUN6LICIFOTJK"
         - git config user.email "ci@example.com"
         - git config --global push.default current
-        - git branch main
-        - git checkout main
+        # - git branch main
+        # - git checkout main
         - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
         - git remote remove ssh_origin || true  # Local repo state may be cached
         - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
@@ -28,7 +28,7 @@ commit_to_codecommit:
         - touch "qwe.txt"
         - git add .
         - git commit -m "My CI commit"
-        - git push ssh_origin HEAD:refs/heads/main  # ❗ this pushes to master,
+        - git push ssh_origin main:refs/heads/main  # ❗ this pushes to master,
                                            # use $CI_COMMIT_REF_NAME if you want to push to current branch
         - git tag MyCiTag  # If you need to add a tag you can do that too
         - git push --tags ssh_origin
