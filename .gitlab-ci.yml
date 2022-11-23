@@ -28,7 +28,8 @@ commit_to_codecommit:
         - touch "qwe.txt"
         - git add .
         - git commit -m "My CI commit"
-        - git push ssh_origin main:refs/heads/main  # ❗ this pushes to master,
+        - git push -u
+        # - git push ssh_origin main:refs/heads/main  # ❗ this pushes to master,
                                            # use $CI_COMMIT_REF_NAME if you want to push to current branch
         - git tag MyCiTag  # If you need to add a tag you can do that too
         - git push --tags ssh_origin
