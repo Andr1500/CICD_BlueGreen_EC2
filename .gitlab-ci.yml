@@ -5,8 +5,8 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
 
-"deploy":
-    stage: my_push_stage
+commit_to_codecommit:
+    stage: deploy
     resource_group: this_option_comes_handy_when_pushing
     only:
         - triggers
