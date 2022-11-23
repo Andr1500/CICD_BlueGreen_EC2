@@ -5,7 +5,7 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
 
-"push_to_codecommit_repo":
+"deploy":
     stage: my_push_stage
     resource_group: this_option_comes_handy_when_pushing
     only:
