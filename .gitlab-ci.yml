@@ -15,7 +15,7 @@ commit_to_codecommit:
         - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
         - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
-        - rm -rf /builds/Andr1500/CICD_flask_app_with_BlueGreen/.git
+        # - rm -rf /builds/Andr1500/CICD_flask_app_with_BlueGreen/.git
         - git config user.name "APKASAKYUN6LICIFOTJK"
         - git config user.email "ci@example.com"
         # - git config --global push.default current
