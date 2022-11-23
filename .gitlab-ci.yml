@@ -15,13 +15,13 @@ commit_to_codecommit:
         - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
         - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
+        - rm -rf ~/.git && git init
+        - git config user.name "APKASAKYUN6LICIFOTJK"
         - git config user.email "ci@example.com"
         - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
-        - git config user.name "APKASAKYUN6LICIFOTJK"
         - git remote remove ssh_origin || true  # Local repo state may be cached
         - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
     script:
-        - touch "xyz.txt"  # Make an edit
         - git add .
         - git commit -m "My CI commit"
         - git push ssh_origin HEAD:refs/heads/main  # ❗ this pushes to master,
