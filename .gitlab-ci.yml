@@ -23,12 +23,12 @@ commit_to_codecommit:
         # - git checkout main
         - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
         # - git remote remove ssh_origin || true  # Local repo state may be cached
-        # - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
+        - git remote add origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
     script:
         # - touch "qwe.txt"
         # - git add .
         # - git commit -m "My CI commit"
-        - git push ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab --all
+        - git push origin main --all
         # - git push ssh_origin HEAD:main
         # - git push ssh_origin main:refs/heads/main  # ❗ this pushes to master,
                                            # use $CI_COMMIT_REF_NAME if you want to push to current branch
