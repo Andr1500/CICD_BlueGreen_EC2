@@ -18,6 +18,7 @@ commit_to_codecommit:
         - rm -rf ~/.git && git init
         - git config user.name "APKASAKYUN6LICIFOTJK"
         - git config user.email "ci@example.com"
+        - git branch
         - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
         - git remote remove ssh_origin || true  # Local repo state may be cached
         - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
