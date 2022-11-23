@@ -21,7 +21,7 @@ commit_to_codecommit:
         - git remote remove ssh_origin || true  # Local repo state may be cached
         - git remote add ssh_origin "git@git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab.git"
     script:
-        - touch "xyz"  # Make an edit
+        - touch "xyz.txt"  # Make an edit
         - git add "xyz"
         - git commit -m "My CI commit"
         - git push ssh_origin HEAD:main  # ❗ this pushes to master,
