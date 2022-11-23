@@ -14,8 +14,8 @@ push_to_codecommit:
         - chmod 700 ~/.ssh
         - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
         - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-        # - chmod 600 ~/.ssh/id_rsa
-        - echo -e $SSH_CONFIG_DIR > ~/.ssh/config
+        - chmod 600 ~/.ssh/id_rsa
+        - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
         - rm -rf ~/.git
         - git clone $GITLAB_REPO
         - cd CICD_flask_app_with_BlueGreen/
