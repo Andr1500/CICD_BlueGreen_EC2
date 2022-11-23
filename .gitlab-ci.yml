@@ -5,42 +5,29 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
 
-push_to_codecommit:
-  stage: deploy
-  before_script:
-    - 'which ssh-agent || ( apt-get update -qy && apt-get install openssh-client -qqy )'
-    - eval `ssh-agent -s`
-    - rm -rf /builds/Andr1500/CICD_flask_app_with_BlueGreen/.git
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
-    - cat ~/.ssh/config
-    - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
-    - cat ~/.ssh/known_hosts
-  script:
-    - git init
-    - git config --global user.email "a1500@tutanota.com"
-    - git config --global user.name "APKASAKYUN6LICIFOTJK"
-    - git add .
-    - git commit -m "initial commit"
-    - git remote add origin ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
-    - git branch main
-    - git checkout main
-    - git pull origin main --allow-unrelated-histories
-    - git remote -v
-    - ls -l
-    - pwd
-    - touch test.txt
-    - git add .
-    - git commit -m "initial commit"
-    - chmod -Rf u+w /builds/Andr1500/CICD_flask_app_with_BlueGreen
-    # - git add -f . # Force add PDF since we .gitignored it
-    # - git commit -m "Compiled from $CI_COMMIT_SHORT_SHA"
-    # - git commit -m "Compiledfrom $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
-    # - git remote rm origin && git remote add origin ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab
-    - git push  origin HEAD:main # Pushes to the same branch as the trigger
+"push_to_codecommit_repo":
+    stage: my_push_stage
+    resource_group: this_option_comes_handy_when_pushing
+    only:
+        - triggers
+    before_script:
+        - mkdir ~/.ssh/
+        - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
+        - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - git config user.email "ci@example.com"
+        - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
+        - git config user.name "APKASAKYUN6LICIFOTJK"
+        - git remote remove ssh_origin || true  # Local repo state may be cached
+        - git remote add ssh_origin "git@git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab.git"
+    script:
+        - touch "xyz"  # Make an edit
+        - git add "xyz"
+        - git commit -m "My CI commit"
+        - git push ssh_origin HEAD:main  # ❗ this pushes to master,
+                                           # use $CI_COMMIT_REF_NAME if you want to push to current branch
+        - git tag MyCiTag  # If you need to add a tag you can do that too
+        - git push --tags ssh_origin
 
 # #steps, run one by one
 # stages:
