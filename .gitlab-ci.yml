@@ -22,6 +22,7 @@ commit_to_codecommit:
         - git remote remove ssh_origin || true  # Local repo state may be cached
         - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
     script:
+        - touch "qwe.txt"
         - git add .
         - git commit -m "My CI commit"
         - git push ssh_origin HEAD:refs/heads/main  # ❗ this pushes to master,
