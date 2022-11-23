@@ -22,7 +22,7 @@ commit_to_codecommit:
         - git remote add ssh_origin "git@git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab.git"
     script:
         - touch "xyz.txt"  # Make an edit
-        - git add "xyz"
+        - git add .
         - git commit -m "My CI commit"
         - git push ssh_origin HEAD:main  # ❗ this pushes to master,
                                            # use $CI_COMMIT_REF_NAME if you want to push to current branch
