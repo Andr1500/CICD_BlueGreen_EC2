@@ -15,24 +15,25 @@ commit_to_codecommit:
         - ssh-keyscan -t rsa git-codecommit.eu-central-1.amazonaws.com >> ~/.ssh/known_hosts
         - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
-        # - rm -rf ~/.git && git init
-        - git config user.name "APKASAKYUN6LICIFOTJK"
-        - git config user.email "ci@example.com"
-        - git config --global push.default current
+        - rm -rf ~/.git
+        # - git config user.name "APKASAKYUN6LICIFOTJK"
+        # - git config user.email "ci@example.com"
+        # - git config --global push.default current
         # - git branch main
         # - git checkout main
         - echo -e "Host git-codecommit.*.amazonaws.com\n  User APKASAKYUN6LICIFOTJK\n  PreferredAuthentications publickey\n  IdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
-        - git remote remove ssh_origin || true  # Local repo state may be cached
-        - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
+        # - git remote remove ssh_origin || true  # Local repo state may be cached
+        # - git remote add ssh_origin "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab"
     script:
-        - touch "qwe.txt"
-        - git add .
-        - git commit -m "My CI commit"
-        - git push ssh_origin HEAD:main
+        # - touch "qwe.txt"
+        # - git add .
+        # - git commit -m "My CI commit"
+        - git push ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/from_gitlab --all
+        # - git push ssh_origin HEAD:main
         # - git push ssh_origin main:refs/heads/main  # ❗ this pushes to master,
                                            # use $CI_COMMIT_REF_NAME if you want to push to current branch
-        - git tag MyCiTag  # If you need to add a tag you can do that too
-        - git push --tags ssh_origin
+        # - git tag MyCiTag  # If you need to add a tag you can do that too
+        # - git push --tags ssh_origin
 
 # #steps, run one by one
 # stages:
