@@ -83,5 +83,3 @@ Add this variables into Settings -> CI/CD -> Variables
 ![Gitlab CI/CD Variables](images/gitlab_cicd_variables.png)
 
 ### [Gitlab CI/CD pipeline](https://gitlab.com/Andr1500/gitlab-cicd/-/pipelines)
-
-changes for test
