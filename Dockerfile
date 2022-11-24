@@ -1,7 +1,6 @@
-FROM python:3.9-slim-buster
+FROM public.ecr.aws/sam/emulation-python3.9:latest
 
-LABEL Name="Python Flask Demo App" Version=1.4.2
-LABEL org.opencontainers.image.source = "https://github.com/benc-uk/python-demoapp"
+LABEL Name="Python Flask Demo App" Version=1.4.3
 
 ARG srcDir=src
 WORKDIR /app
