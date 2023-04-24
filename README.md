@@ -50,9 +50,6 @@ Gitlab pipeline stages:
 
 ![Gitlab CI/CD Variables](images/gitlab_variables.png)
 
-Create AWS IAM user for access to ECR, assign to the user AmazonEC2ContainerRegistryPowerUser policy, copy
-access keys and add the keys to Gitlab CI/CD variables.
-
 Add this variables into Settings -> CI/CD -> Variables
 
 ![env schema](images/lucid_schema_ec2.png)
