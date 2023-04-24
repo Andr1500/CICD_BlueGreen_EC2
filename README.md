@@ -1,11 +1,12 @@
-# Demo Web Application with blue/green deployment on EC2 based on simple Nginx docker container
+# Simple web application blue-green deployment with GitLab CI/CD pipeline via SSH on an AWS EC2
 
+My post on Medium about the project: https://link.medium.com/PtHs15U5ezb
 
 ## Pre-reqs
 
-A GitLab account with an active project.
-An AWS account with permissions to create resources and an S3 bucket for storing the Terraform backend.
-The Terraform CLI is installed on your local machine.
+- A GitLab account with an active project.
+- An AWS account with permissions to create resources and an S3 bucket for storing the Terraform backend.
+- The Terraform CLI is installed on your local machine.
 
 ## Building & Running
 
@@ -42,13 +43,18 @@ Gitlab pipeline stages:
 - **deploy** Deploy app on EC2 instance, first build deploy docker on 80 port as "blue deployment", next build deploy container on 8080 port as "green deployment". "nginx-app1" is container name for "blue deployment", "nginx-app2" is container name for "green deployment".
 - **blue_green** Manual stage, after verifying that everything is ok with "green deployment" we run this stage and "green deployment" becomes "blue deployment". We stop and delete the container "nginx-app1" and recreate it based on "green deployment" image. Next we stop and delete "green deployment" container. Next we delete all unused images.
 
-![Gitlab CI/CD pipeline](images/gitlab_variables.png)
+![Gitlab CI/CD pipeline](images/cicd_pipeline.png)
 
 
 ## Gitlab CI/CD Variables
 
-Add this variables into Gitlab Settings -> CI/CD -> Variables
+![Gitlab CI/CD Variables](images/gitlab_variables.png)
 
-![Gitlab CI/CD Variables](images/gitlab_cicd_variables.png)
+Create AWS IAM user for access to ECR, assign to the user AmazonEC2ContainerRegistryPowerUser policy, copy
+access keys and add the keys to Gitlab CI/CD variables.
+
+Add this variables into Settings -> CI/CD -> Variables
+
+![env schema](images/lucid_schema_ec2.png)
 
 ## [Gitlab CI/CD pipeline](https://gitlab.com/Andr1500/CICD_flask_app_with_BlueGreen/-/pipelines)
