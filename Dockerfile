@@ -1,16 +1,17 @@
-FROM python:3.9-slim-buster
+# Use an official NGINX runtime as the base image
+FROM ${ECR_REPOSITORY_URI}/${IMAGE_NAME}:${IMAGE_DEFAULT_TAG}
 
-LABEL Name="Python Flask Demo App" Version=1.4.2
-LABEL org.opencontainers.image.source = "https://github.com/benc-uk/python-demoapp"
+# Set the working directory to the NGINX web root
+WORKDIR /usr/share/nginx/html
 
-ARG srcDir=src
-WORKDIR /app
-COPY $srcDir/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the default index.html file to the working directory
+COPY index.html .
 
-COPY $srcDir/run.py .
-COPY $srcDir/app ./app
+# Create version.html file with Nginx version information
+RUN echo "Nginx version: $(nginx -v 2>&1 | awk -F / '{print $2}')" > version.html
 
-EXPOSE 5000
+# Expose port 5000 for incoming traffic
+EXPOSE 80
 
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "run:app"]
+# Start the NGINX web server when the container starts
+CMD ["nginx", "-g", "daemon off;"]
