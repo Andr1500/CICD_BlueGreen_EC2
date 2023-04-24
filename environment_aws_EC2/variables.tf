@@ -8,7 +8,7 @@ variable "instance_type" {
 }
 
 variable "count_ubuntu_instances" {
-  default = "0"
+  default = "1"
 }
 
 variable "count_rhel_instances" {
