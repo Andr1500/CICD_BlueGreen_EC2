@@ -13,7 +13,7 @@ My post on Medium about the project: https://link.medium.com/PtHs15U5ezb
 Clone the project to any directory where you do development work
 
 ```
-git clone https://gitlab.com/Andr1500/gitlab-cicd.git
+git clone https://gitlab.com/Andr1500/CICD_BlueGreen_EC2.git
 ```
 
 ## Creation of Elastic Container Registry and EC2 instance (or instances) with Terraform
@@ -57,4 +57,4 @@ Add this variables into Settings -> CI/CD -> Variables
 
 ![env schema](images/lucid_schema_ec2.png)
 
-## [Gitlab CI/CD pipeline](https://gitlab.com/Andr1500/CICD_flask_app_with_BlueGreen/-/pipelines)
+## [Gitlab CI/CD pipeline](https://gitlab.com/Andr1500/CICD_BlueGreen_EC2/-/pipelines)
